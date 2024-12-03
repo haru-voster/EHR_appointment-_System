@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'emediapp',
     'widget_tweaks',
 ]
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'eMedi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [  TEMPLATE_DIR,],
+        'DIRS': [  TEMPLATE_DIR,  'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,6 +143,8 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL='/afterlogin'
+# redirect to home page
+LOGOUT_REDIRECT_URL = '/' 
 
 #for contact us give your gmail id and password
 EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'

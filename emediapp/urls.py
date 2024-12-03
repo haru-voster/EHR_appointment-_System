@@ -22,15 +22,19 @@ urlpatterns = [
     
     path('aboutus/', views.aboutus_view),
     path('contactus/', views.contactus_view),
+    path('pay', views.pay, name='pay'),
 
     
     path('adminclick/', views.adminclick_view),
     path('doctorclick/', views.doctorclick_view),
     path('patientclick/', views.patientclick_view),
+    # admin logout
+    
+     
 
     path('adminsignup/', views.admin_signup_view),
     path('doctorsignup/', views.doctor_signup_view,name='doctorsignup'),
-    path('patientsignup/', views.patient_signup_view),
+    path('patientsignup/', views.patient_signup_view, name="patientsignup"),
     
     path('adminlogin/', LoginView.as_view(template_name='hospital/adminlogin.html')),
     path('doctorlogin/', LoginView.as_view(template_name='hospital/doctorlogin.html')),

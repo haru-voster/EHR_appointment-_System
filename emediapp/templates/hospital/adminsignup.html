@@ -61,13 +61,13 @@
 
 
 
-  <!--- signup page for admin by admin(sumit)  ---------->
+  <!--- signup page for admin by admin(Haroun)  ---------->
   <form method="post">
     {% csrf_token %}
     <div class="container register-form">
       <div class="form">
         <div class="note">
-          <p>Add New Admin To Hospital</p>
+          <p>Add New Admin To eMedi</p>
         </div>
 
         <div class="form-content">
@@ -92,17 +92,13 @@
             </div>
           </div>
           <button type="submit" class="btnSubmit">Submit</button>
-          <div class="text-center">Already have an account? <a href="adminlogin">Login here</a></div>
+          <div class="text-center">Already have an account? <a href="/adminlogin">Login here</a></div>
         </div>
       </div>
     </div>
 
   </form>
-  <!--
-  developed By : sumit kumar
-  facebook : fb.com/sumit.luv
-  youtube : youtube.com/lazycoders
-  -->
+
 
   {% include "hospital/footer.html" %}
 </body>

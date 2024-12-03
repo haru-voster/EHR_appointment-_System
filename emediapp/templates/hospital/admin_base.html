@@ -36,7 +36,7 @@
     -----------------------------------------*/
     footer {
       padding: 0px 0px 0px 0px;
-      background-color: black;
+      background-color: #004080;
       margin: 0px;
     }
 
@@ -77,7 +77,7 @@
       color: white;
     }
 
-    .fa-instagram {
+    .fa-git {
       background: #125688;
       color: white;
     }
@@ -101,7 +101,8 @@
     }
 
     .menu {
-      background: #5bc995;
+      background-color: #dc3545; /* Main background shows authority*/
+      color: #ffffff;;
       height: 100vh;
       width: 240px;
       position: fixed;
@@ -120,7 +121,7 @@
       border-radius: 50%;
       overflow: hidden;
       border: 4px solid #ffea92;
-      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 0 4px ,rgba(255, 255, 255, 0.2);
     }
     .menu .avatar h2 {
       font-weight: normal;
@@ -263,7 +264,7 @@
       }
       .menu:focus {
         transform: translate3d(0, 0, 0);
-        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0.6);
+        box-shadow: #1B2C51;
       }
       .menu:focus .smartphone-menu-trigger {
         pointer-events: none;
@@ -282,6 +283,7 @@
     <header class="avatar">
       <img src="{% static "images/adminpropic.png" %}" />
       <br><br>
+      
       <h6>Admin</h6>
       <h2>{{request.user.first_name}}</h2>
     </header>
@@ -298,19 +300,23 @@
 
     <!-- nav start -->
     <div class="bs-example">
-      <nav class="navbar navbar-expand-md  navbar-dark fixed-top" style="background:#337AB7;">
-        <a href="/admin-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-          <div class="navbar-nav" style=" margin-left: 90%;">
-
-            <a href="/logout" class="nav-item nav-link">Logout</a>
-          </div>
-        </div>
-      </nav>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
+    <a href="/admin-dashboard" class="navbar-brand">eMEDI</a>
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+      <div class="navbar-nav" style="margin-left: 90%;">
+        <!-- Logout Form -->
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link nav-item nav-link" style="color: white;">Logout</button>
+        </form>
+      </div>
     </div>
+  </nav>
+</div>
+
     <!-- nav end -->
 
 
@@ -326,10 +332,10 @@
     <br><br><br><br>
     <footer>
       <p>
-        <a id="ftr" href="https://facebook.com/sumit.luv/" class="fa fa-facebook"></a>
-        <a id="ftr" href="https://api.whatsapp.com/send?phone=919572181024&text=Hello%20Sumit.%0d%0aHow%20are%20you%20%3f%0d%0aI%20came%20from%20your%20website.&source=&data=#" class="fa fa-whatsapp"></a>
-        <a id="ftr" href="https://instagram.com/sumit.luv" class="fa fa-instagram"></a>
-        <a id="ftr" href="https://twitter.com/sumitkumar1503" class="fa fa-twitter"></a>
+        <a id="ftr" href="https://www.facebook.com/profile.php?id=100072733456818" class="fa fa-facebook"></a>
+        <a id="ftr" href="https://api.whatsapp.com/send?phone=+254708466793&text=Hello%20Haroun.%0d%0aHow%20are%20you%20%3f%0d%0aI%20came%20from%20your%20website.&source=&data=#" class="fa fa-whatsapp"></a>
+        <a id="ftr" href="https://github.com/haru-voster" class="fa fa-git"></a>
+        <a id="ftr" href="https://twitter.com/@HarounMagio" class="fa fa-twitter"></a>
       </p>
 
       <br>
@@ -337,8 +343,8 @@
         <div class="row">
           <div class="col-md-12 col-sm-12">
             <div style="color:#ffffff;" class="wow fadeInUp footer-copyright">
-              <p>Made in India <br>
-                Copyright &copy; 2020 LazyCoder </p>
+              <p>Developed by Software Engineer <br>
+                Copyright &copy; 2024 || <a href="https://api.whatsapp.com/send?phone=+254708466793&text=Hello%20Haroun.&source=&data=#"> Haroun <a></p>
             </div>
           </div>
         </div>

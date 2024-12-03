@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>A simple, clean, and responsive HTML invoice template</title>
+  <title>Patient Invoice</title>
 
   <style>
     .invoice-box {
@@ -49,7 +49,7 @@
     }
 
     .invoice-box table tr.heading td {
-      background: #eee;
+      background: #c99696;
       border-bottom: 1px solid #ddd;
       font-weight: bold;
     }
@@ -223,7 +223,7 @@
       <td></td>
 
       <td>
-        Total Rupees : {{total}}
+        Total Kshs. : {{total}}
       </td>
     </tr>
 
@@ -239,7 +239,7 @@
 {%else%}
 <h5 style="text-align:center;">You Are Not Discharged By Hospital !</h5>
 <h5 style="text-align:center;">Your Treatment Is Going On !</h5><br><br>
-<h6 style="text-align:center;">When You Will Be Discahrged. You Can Download Invoice.</h6>
+<h6 style="text-align:center;">When You Will Be Discharged. You Can Download Invoice.</h6>
 {%endif%}
 <!--
 developed By : @haru-voster
