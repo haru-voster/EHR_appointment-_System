@@ -456,18 +456,79 @@ from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.template import Context
 from django.http import HttpResponse
+from PyPDF2 import PdfReader, PdfWriter
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from datetime import datetime
+from math import sin, cos, radians
 
+def add_watermark(pdf_data, watermark_text="Emedi Hospital"):
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=letter)
 
-def render_to_pdf(template_src, context_dict):
+   
+    page_width, page_height = letter
+    circle_center_x = page_width / 4  
+    circle_center_y = page_height - page_height / 2  
+    outer_circle_radius = 100 
+    inner_circle_radius = 85  
+    text_radius = (outer_circle_radius + inner_circle_radius) / 2  
+    # Draw the outer circle
+    can.setStrokeColorRGB(0, 0, 1)  
+    can.setFillColorRGB(0.9, 0.9, 1, alpha=0.3) 
+    can.circle(circle_center_x, circle_center_y, outer_circle_radius, stroke=1, fill=1)
+# Inner circle
+    can.setFillColorRGB(1, 1, 1, alpha=0.3)  # White fill for the inner circle
+    can.circle(circle_center_x, circle_center_y, inner_circle_radius, stroke=1, fill=1)
+ 
+    can.setFont("Helvetica-Bold", 20)
+    can.setFillColorRGB(0, 0, 1)  # Blue text
+    angle_step = 360 / len(watermark_text)  
+    start_angle = -90 
+    for i, char in enumerate(watermark_text):
+        angle = start_angle + i * angle_step
+        angle_radians = radians(angle)
+        x = circle_center_x + outer_circle_radius * cos(angle_radians)
+        y = circle_center_y + inner_circle_radius * sin(angle_radians)
+        can.saveState()
+        can.translate(x, y)
+        can.rotate(angle + 90)  
+        can.drawString(0, 0, char)
+        can.restoreState()
+    # CURREN DATE
+    current_date = datetime.now().strftime("%B %d, %Y")
+    can.setFont("Helvetica", 12)  # Smaller font for the date
+    date_width = can.stringWidth(current_date, "Helvetica", 12)
+    can.drawString(circle_center_x - date_width / 2, circle_center_y - 4, current_date)  
+    can.save()
+
+    packet.seek(0)
+    watermark_pdf = PdfReader(packet)
+    original_pdf = PdfReader(io.BytesIO(pdf_data))
+    output_pdf = PdfWriter()
+
+    for page in original_pdf.pages:
+        page.merge_page(watermark_pdf.pages[0])
+        output_pdf.add_page(page)
+
+    result_pdf = io.BytesIO()
+    output_pdf.write(result_pdf)
+    result_pdf.seek(0)
+    return result_pdf.getvalue()
+
+def render_to_pdf(template_src, context_dict, watermark_text="eMedi Hospital Management "):
     template = get_template(template_src)
-    html  = template.render(context_dict)
+    html = template.render(context_dict)
     result = io.BytesIO()
     pdf = pisa.pisaDocument(io.BytesIO(html.encode("ISO-8859-1")), result)
+
     if not pdf.err:
-        return HttpResponse(result.getvalue(), content_type='application/pdf')
-    return
+        # Add watermark to the generated PDF
+        pdf_with_watermark = add_watermark(result.getvalue(), watermark_text)
+        return HttpResponse(pdf_with_watermark, content_type='application/pdf')
 
-
+    return None
 
 def download_pdf_view(request,pk):
     dischargeDetails=models.PatientDischargeDetails.objects.all().filter(patientId=pk).order_by('-id')[:1]

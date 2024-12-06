@@ -29,16 +29,18 @@
 
 
   <div class="bs-example">
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
-      <a href="/" class="navbar-brand">@eMedi Hospital</a>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:	#005090;">
+      
+      <a href="/" class="navbar-brand">eMEDI HOSPITAL SYSTEM</a>
       <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
-
+      
       <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+        
         <div class="navbar-nav">
 
-          <a href="/adminclick" class="nav-item nav-link">Admin</a>
+          <a href="/adminclick" class="nav-item nav-link" onClick="displayAlert()">Admin</a>
           <a href="/doctorclick" class="nav-item nav-link">Doctor</a>
           <a href="/patientclick" class="nav-item nav-link">Patient</a>
 
@@ -59,7 +61,14 @@ developed By : @haru-voster
 send me an email via
 ||
 My page: https://haru-voster.github.io/portifolio
+
 -->
+<script>
+  function displayAlert() {
+    var myText = "Are you an Admin? click OK";
+    alert (myText);
+  }
+  </script>
 </body>
 
 </html>

@@ -23,7 +23,15 @@
 {#    --primary: #0463FA;#}
 {#    --light: #EFF5FF;#}
 {#    --dark: #1B2C51;#}
-{#}#}
+    }
+.jumbotron p{
+ 
+  color:green; 
+  font-size:50px;
+  font-style: oblique;
+
+
+}
   </style>
   <title>HAROUN</title>
 </head>
@@ -35,12 +43,14 @@
     <h3 class='alert alert-success' style="margin-bottom:0px;">About Us !</h3>
   </center>
   <div class="jumbotron" style="margin-bottom: 0px;margin-top: 0px;">
-    <h1 class="display-4">Hello</h1>
-    <p class="lead">A service dedicated to Hospital Admin, Doctor and Patient.</p>
-    <hr class="my-4">
-    <p>Explore our Website.</p>
+    <h1 class="display-4"></h1>
+    <p class="lead" id="typing-text"></p>
     <p class="lead">
-      <a class="btn btn-primary btn-lg" href="#" role="button">HOME</a>
+    
+    <hr class="my-4">
+    <p style="color:black; font-size:20px;">Our team is committed to providing exceptional healthcare and ensuring your well-being.</p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="/" role="button">HOME</a>
     </p>
   </div>
   {% include "hospital/footer.html" %}
@@ -51,5 +61,41 @@ send me an email via
 ||
 My page: https://haru-voster.github.io/portifolio
 -->
+<script>
+  {% comment %} mission and vision {% endcomment %}
+  const texts = [
+    "MISSION: To provide quality healthcare with compassion and respect.",
+    "VISION: To be the leading provider of patient-centered care.",
+    "MOTTO: Together for Better Health"
+  ];
+
+  let i = 0;
+  let j = 0;
+  let currentText = texts[i];
+  const typingElement = document.getElementById('typing-text');
+
+  function typeText() {
+    if (j < currentText.length) {
+      typingElement.textContent += currentText.charAt(j);
+      j++;
+      setTimeout(typeText, 100); 
+    } else {
+      
+      if (i < texts.length - 1) {
+        i++;
+        j = 0;
+        currentText = texts[i];
+        setTimeout(() => {
+          typingElement.textContent = ''; // Clear the text
+          typeText(); 
+        }, 1000); 
+      }
+    }
+  }
+
+  window.onload = function() {
+    typeText();
+  };
+</script>
 
 </html>

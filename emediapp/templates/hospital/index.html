@@ -10,10 +10,10 @@ written By : Haroun
 
 <head>
   <style media="screen">
-    .jumbotron {
+ .jumbotron {
       margin-top: 0px;
       margin-bottom: 0px;
-      background-image: url('{% static "images/bg.jpg" %}');
+      {% comment %} background-image: url('{% static "images/bg.jpg" %}'); {% endcomment %}
       background-size: cover;
       background-repeat: no-repeat;
     }
@@ -48,12 +48,61 @@ written By : Haroun
         text-shadow: 0 0 20px #eeeeee, 0 0 30px #8e43a0, 0 0 40px #8e43a0, 0 0 50px #8e43a0, 0 0 60px #8e43a0, 0 0 70px #8e43a0, 0 0 80px #8e43a0;
       }
     }
+     
+     /* Styling the video container */
+     .video-container {
+         position: relative;
+         width: 100%;
+         height: 100vh; /* Full viewport height */
+         overflow: hidden;
+     }
+     
+     /* Styling the video */
+     #bg-video {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         min-width: 100%;
+         min-height: 100%;
+         width: auto;
+         height: auto;
+         z-index: 1;
+         object-fit: cover;
+     }
+     
+     /* Overlay content styling */
+     .overlay-content {
+         position: relative;
+         z-index: 2;
+         text-align: center;
+         color: white;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         font-family: Arial, sans-serif;
+     }
+     
+     /* Optional content styling */
+     .overlay-content h1 {
+         font-size: 3rem;
+         margin: 0;
+     }
+     
+     .overlay-content p {
+         font-size: 1.5rem;
+         margin-top: 10px;
+     }
+     
   </style>
 </head>
 <br>
 <br>
 
-<div class="jumbotron" style="margin-bottom: 0px;margin-top: 0px;">
+{% comment %} <div class="jumbotron" style="margin-bottom: 0px;margin-top: 0px;">
+  <video autoplay muted loop id="bg-video">
+    <source src="{% static 'assets/images/course-video.mp4' %}" type="video/mp4" />
+</video>
   <br>
   <h5 class="display-3 glow">We Listen, We care</h5>
   <br><br><br><br><br>
@@ -66,7 +115,27 @@ written By : Haroun
   <br><br>
 </div>
 
-<br><br><br><br>
+<br><br><br><br> {% endcomment %}
+<div class="video-container">
+  <video autoplay muted loop id="bg-video">
+      <source src="{% static '/images/patient.mp4' %}" type="video/mp4" />
+      
+  </video>
+  <div class="overlay-content">
+    <br>
+    <h5 class="display-3 glow">Together for Better Health</h5>
+    <br><br><br><br><br>
+    <p>
+    <h3 class ="display-3 glow">Emergency ?</h3>
+  
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="/patientclick" role="button">Take Appointment</a>
+    </p>
+    <br><br>
+  </div>
+  
+  <br><br><br><br> 
+</div>
 
 {% include "hospital/admin_doctor_patient_card.html" %}
 <br><br><br>
