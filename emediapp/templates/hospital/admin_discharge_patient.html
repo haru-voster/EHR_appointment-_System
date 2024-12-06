@@ -17,6 +17,11 @@
     .row {
       margin: 100px;
     }
+
+    .faint{
+      color: #999999; 
+      background-color: #f9f9f9;
+    }
   </style>
 </head>
 <!--
@@ -37,22 +42,28 @@ written By : Haroun
         </tr>
       </thead>
       {% for p in patients %}
-      <tr>
+      <tr class ="{% if not p.is_discharged %} faint {% endif %}">
         <td> {{p.get_name}}</td>
         <td>{{p.symptoms}}</td>
         <td>{{p.mobile}}</td>
         <td><a class="btn btn-primary btn-xs" href="{% url 'discharge-patient' p.id  %}"><span class="glyphicon glyphicon-log-out"></span></a></td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-
-
+        {% if not p.is_discharged %}
+        <a class="btn btn-primary btn-xs" href="{% url 'discharge-patient' p.id %}">
+          <span class="glyphicon glyphicon-log-out"></span>
+        </a>
+        {% else %}
+        <span>Discharged</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
 </div>
-<!--
-developed By : @haru-voster
+</div>
+
+{% comment %} developed By : @haru-voster
 send me an email via
 ||
-My page: https://haru-voster.github.io/portifolio
--->
+My page: https://haru-voster.github.io/portifolio {% endcomment %}
+
 {% endblock content %}

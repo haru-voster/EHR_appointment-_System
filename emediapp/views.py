@@ -860,6 +860,7 @@ def patient_discharge_view(request):
         'total':dischargeDetails[0].total,
         }
         print(patientDict)
+        patient.save()
     else:
         patientDict={
             'is_discharged':False,
