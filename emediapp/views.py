@@ -496,7 +496,7 @@ def add_watermark(pdf_data, watermark_text="Emedi Hospital"):
         can.rotate(angle + 90)  
         can.drawString(0, 0, char)
         can.restoreState()
-    # CURREN DATE
+    # CURRENT DATE
     current_date = datetime.now().strftime("%B %d, %Y")
     can.setFont("Helvetica", 12)  # Smaller font for the date
     date_width = can.stringWidth(current_date, "Helvetica", 12)
@@ -612,9 +612,9 @@ def reject_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(id=pk)
     appointment.delete()
     return redirect('admin-approve-appointment')
-#---------------------------------------------------------------------------------
+
 #------------------------ ADMIN RELATED VIEWS END ------------------------------
-#---------------------------------------------------------------------------------
+
 
 
 
@@ -871,18 +871,11 @@ def patient_discharge_view(request):
 
 
 #------------------------ PATIENT RELATED VIEWS END ------------------------------
-#---------------------------------------------------------------------------------
 
 
 
-
-
-
-
-
-#---------------------------------------------------------------------------------
 #------------------------ ABOUT US AND CONTACT US VIEWS START ------------------------------
-#---------------------------------------------------------------------------------
+
 def aboutus_view(request):
     return render(request,'hospital/aboutus.html')
 
@@ -899,38 +892,36 @@ def contactus_view(request):
     return render(request, 'hospital/contactus.html', {'form':sub})
 
 
-#---------------------------------------------------------------------------------
 #------------------------ ADMIN RELATED VIEWS END ------------------------------
-#---------------------------------------------------------------------------------
 
 #----------mpesa api intergration--------
-#---daraja api-----------------
-from django.http import HttpResponse
-import requests
-from requests.auth import HTTPBasicAuth
-import json
-from . token import MpesaAccessToken, LipanaMpesaPpassword
+# #---daraja api-----------------
+# from django.http import HttpResponse
+# import requests
+# from requests.auth import HTTPBasicAuth
+# import json
+# from . token import MpesaAccessToken, LipanaMpesaPpassword
 
-def pay(request):
-    if request.method =="POST":
-        phone = request.POST['phone']
-        amount = request.POST['amount']
-        access_token = MpesaAccessToken.validated_mpesa_access_token
-        api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-        headers = {"Authorization": "Bearer %s" % access_token}
-        request = {
-            "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
-            "Password": LipanaMpesaPpassword.decode_password,
-            "Timestamp": LipanaMpesaPpassword.lipa_time,
-            "TransactionType": "CustomerPayBillOnline",
-            "Amount": amount,
-            "PartyA": phone,
-            "PartyB": LipanaMpesaPpassword.Business_short_code,
-            "PhoneNumber": phone,
-            "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
-            "AccountReference": "VOSTER_TECH",
-            "TransactionDesc": "Web Development Charges"
+# def pay(request):
+#     if request.method =="POST":
+#         phone = request.POST['phone']
+#         amount = request.POST['amount']
+#         access_token = MpesaAccessToken.validated_mpesa_access_token
+#         api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+#         headers = {"Authorization": "Bearer %s" % access_token}
+#         request = {
+#             "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
+#             "Password": LipanaMpesaPpassword.decode_password,
+#             "Timestamp": LipanaMpesaPpassword.lipa_time,
+#             "TransactionType": "CustomerPayBillOnline",
+#             "Amount": amount,
+#             "PartyA": phone,
+#             "PartyB": LipanaMpesaPpassword.Business_short_code,
+#             "PhoneNumber": phone,
+#             "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+#             "AccountReference": "VOSTER_TECH",
+#             "TransactionDesc": "Web Development Charges"
             
-        }
+#         }
 
 

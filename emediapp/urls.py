@@ -22,11 +22,11 @@ urlpatterns = [
     
     path('aboutus/', views.aboutus_view),
     path('contactus/', views.contactus_view),
-    path('pay', views.pay, name='pay'),
+    # path('pay', views.pay, name='pay'),
 
     
     path('adminclick/', views.adminclick_view),
-    path('doctorclick/', views.doctorclick_view),
+    path('doctorclick/', views.doctorclick_view, name='doctorclick'),
     path('patientclick/', views.patientclick_view),
     # admin logout
     
