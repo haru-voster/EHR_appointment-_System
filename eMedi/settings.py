@@ -84,6 +84,7 @@ WSGI_APPLICATION = 'eMedi.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -149,6 +150,7 @@ LOGIN_REDIRECT_URL='/afterlogin'
 # redirect to home page
 LOGOUT_REDIRECT_URL = '/' 
 
+SESSION_COOKIE_SECURE = False
 #for contact us give your gmail id and password
 EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

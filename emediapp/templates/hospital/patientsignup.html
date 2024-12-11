@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+{% load static %}
 {% load widget_tweaks %}
 <html lang="en" dir="ltr">
 
@@ -61,17 +61,16 @@
 
 
 
-  <!--- signup page for patient by admin(sumit)  ---------->
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data" action="{% url 'patientsignup' %}" style="display: inline;">
     {% csrf_token %}
     <div class="container register-form">
       <div class="form">
         <div class="note">
-          <p>Register to Hospital</p>
+          <p>Register as a Patient</p>
         </div>
-
         <div class="form-content">
           <div class="row">
+            <!-- Left Column -->
             <div class="col-md-6">
               <div class="form-group">
                 {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
@@ -89,6 +88,8 @@
                 {% render_field patientForm.profile_pic required="required" class="form-control" placeholder="Profile Picture" %}
               </div>
             </div>
+
+            <!-- Right Column -->
             <div class="col-md-6">
               <div class="form-group">
                 {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
@@ -102,15 +103,19 @@
               <div class="form-group">
                 {% render_field patientForm.assignedDoctorId class="form-control" placeholder="Doctor" %}
               </div>
-
             </div>
           </div>
+
+          <!-- Submit Button -->
           <button type="submit" class="btnSubmit">Register</button>
-          <div class="text-center">Already have an account? <a href="patientlogin">Login here</a></div>
+
+          <!-- Login Redirect -->
+          <div class="text-center">
+            Already have an account? <a href=" {% url 'patientclick' %}">Login here</a>
+          </div>
         </div>
       </div>
     </div>
-
   </form>
 
   {% include "hospital/footer.html" %}

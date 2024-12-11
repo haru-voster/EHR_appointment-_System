@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 {% load widget_tweaks %}
 <html lang="en" dir="ltr">
 
@@ -57,7 +58,7 @@
   <br>
   <br><br>
 
-  <!--- login page for patient by admin(sumit)  ---------->
+ 
   <form method="post">
     {% csrf_token %}
     <div class="container register-form">
@@ -84,7 +85,7 @@
             </div>
           </div>
           <button type="submit" class="btnSubmit">Login</button>
-          <div class="text-center">Do not have account? <a href="patientsignup">Signup here</a></div>
+          <div class="text-center">Do not have account? <a href="/patientsignup">Signup here</a></div>
         </div>
       </div>
     </div>

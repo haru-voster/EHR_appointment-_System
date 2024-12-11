@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from datetime import datetime,timedelta,date
 from django.conf import settings
 from django.db.models import Q
+from django.contrib import messages
 
 # Create your views here.
 def home_view(request):
@@ -16,21 +17,21 @@ def home_view(request):
     return render(request,'hospital/index.html')
 
 
-#for showing signup/login button for admin(by sumit)
+#for showing signup/login button for admin(by Haroun)
 def adminclick_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/adminclick.html')
 
 
-#for showing signup/login button for doctor(by sumit)
+#for showing signup/login button for doctor(by Haroun)
 def doctorclick_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/doctorclick.html')
 
 
-#for showing signup/login button for patient(by sumit)
+#for showing signup/login button for patient(by Haroun)
 def patientclick_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
@@ -55,52 +56,70 @@ def admin_signup_view(request):
 
 
 
+from django.contrib import messages
+from django.shortcuts import render, HttpResponseRedirect
+from django.contrib.auth.models import Group
+from . import forms
+
 def doctor_signup_view(request):
-    userForm=forms.DoctorUserForm()
-    doctorForm=forms.DoctorForm()
-    mydict={'userForm':userForm,'doctorForm':doctorForm}
-    if request.method=='POST':
-        userForm=forms.DoctorUserForm(request.POST)
-        doctorForm=forms.DoctorForm(request.POST,request.FILES)
+    userForm = forms.DoctorUserForm()
+    doctorForm = forms.DoctorForm()
+    mydict = {'userForm': userForm, 'doctorForm': doctorForm}
+
+    if request.method == 'POST':
+        userForm = forms.DoctorUserForm(request.POST)
+        doctorForm = forms.DoctorForm(request.POST, request.FILES)
         if userForm.is_valid() and doctorForm.is_valid():
-            user=userForm.save()
+            user = userForm.save()
             user.set_password(user.password)
             user.save()
-            doctor=doctorForm.save(commit=False)
-            doctor.user=user
-            doctor=doctor.save()
+            doctor = doctorForm.save(commit=False)
+            doctor.user = user
+            doctor.save()
             my_doctor_group = Group.objects.get_or_create(name='DOCTOR')
             my_doctor_group[0].user_set.add(user)
-        return HttpResponseRedirect('doctorlogin')
-    return render(request,'hospital/doctorsignup.html',context=mydict)
+            
+            # Add success message
+            messages.success(request, 'Doctor account created successfully! Please log in.')
+
+            return HttpResponseRedirect('/doctorlogin/')  # Redirect to login page
+    return render(request, 'hospital/doctorsignup.html', context=mydict)
+
 
 
 def patient_signup_view(request):
-    userForm=forms.PatientUserForm()
-    patientForm=forms.PatientForm()
-    mydict={'userForm':userForm,'patientForm':patientForm}
-    if request.method=='POST':
-        userForm=forms.PatientUserForm(request.POST)
-        patientForm=forms.PatientForm(request.POST,request.FILES)
+    # Initialize the forms
+    userForm = forms.PatientUserForm()
+    patientForm = forms.PatientForm()
+    mydict = {'userForm': userForm, 'patientForm': patientForm}
+
+    if request.method == 'POST':
+        userForm = forms.PatientUserForm(request.POST)
+        patientForm = forms.PatientForm(request.POST, request.FILES)
+
         if userForm.is_valid() and patientForm.is_valid():
-            user=userForm.save()
+            user = userForm.save()
             user.set_password(user.password)
             user.save()
-            patient=patientForm.save(commit=False)
-            patient.user=user
-            patient.assignedDoctorId=request.POST.get('assignedDoctorId')
-            patient=patient.save()
+            patient = patientForm.save(commit=False)
+            patient.user = user
+            patient.assignedDoctorId = request.POST.get('assignedDoctorId')
+            patient.save()
+    
             my_patient_group = Group.objects.get_or_create(name='PATIENT')
             my_patient_group[0].user_set.add(user)
-        return HttpResponseRedirect('patientlogin')
-    return render(request,'hospital/patientsignup.html',context=mydict)
+          
+            messages.success(request, 'Patient account created successfully! Please log in.')
+            return HttpResponseRedirect('/patientlogin/')
+
+    return render(request, 'hospital/patientsignup.html', context=mydict)
 
 
 
 
 
 
-#-----------for checking user is doctor , patient or admin(by sumit)
+#-----------for checking user is doctor , patient or admin(by Haroun)
 def is_admin(user):
     return user.groups.filter(name='ADMIN').exists()
 def is_doctor(user):
@@ -113,6 +132,11 @@ def is_patient(user):
 def afterlogin_view(request):
     if is_admin(request.user):
         return redirect('admin-dashboard')
+    #  accountapproval=models.Doctor.objects.all().filter(user_id=request.user.id,status=True)
+    #     if accountapproval:
+    #         return redirect('admin-dashboard')
+    #     else:
+    #         return render(request,'hospital/admin_wait_for_approval.html')
     elif is_doctor(request.user):
         accountapproval=models.Doctor.objects.all().filter(user_id=request.user.id,status=True)
         if accountapproval:
@@ -782,6 +806,7 @@ def patient_appointment_view(request):
 
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
+
 def patient_book_appointment_view(request):
     appointmentForm=forms.PatientAppointmentForm()
     patient=models.Patient.objects.get(user_id=request.user.id) #for profile picture of patient in sidebar
@@ -802,9 +827,11 @@ def patient_book_appointment_view(request):
             appointment.patientName=request.user.first_name #----user can choose any patient but only their info will be stored
             appointment.status=False
             appointment.save()
-        return HttpResponseRedirect('patient-view-appointment')
-    return render(request,'hospital/patient_book_appointment.html',context=mydict)
+            
+            mydict['message'] = "Your appointment has been booked successfully!"
+            return render(request, 'hospital/patient_book_appointment.html', context=mydict)
 
+    return render(request, 'hospital/patient_book_appointment.html', context=mydict)
 
 
 def patient_view_doctor_view(request):

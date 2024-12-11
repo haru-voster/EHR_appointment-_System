@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load static%}
+
 <html lang="en" dir="ltr">
 
 <head>
@@ -22,26 +22,30 @@
       margin: 0px;
     }
   </style>
+
 </head>
 
 <body>
   {% include "hospital/navbar.html" %}
   <br>
   <br>
+
   <div class="jumbotron" style="margin-top: 0px;
-  margin-bottom: 0px;">
-     <!-- Logout Form -->
-  <form action="{% url 'logout' %}" method="post" style="display: inline;">
-      {% csrf_token %}
+    margin-bottom: 0px;">
+       <!-- Logout Form -->
+    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        {% csrf_token %}
     <h1 class="display-4">Hello {{request.user.first_name}}</h1>
-    <p class="lead">Your Account is not approved till now <br><br>Our Team is checking your profile <br><br> Soon your account will be confirmed !!!</p>
+    <p class="lead">We're excited to have you on board! <br> Your account is currently being reviewed by our team, 
+      <br>and you’ll be notified once it's confirmed <br><br>  Stay tuned!!!</p>
     <hr class="my-4">
     <p>Check Later</p>
-    <p class="lead">
+    <p class="lead"></p>
+   
       <button type="submit" class="btn btn-link nav-item nav-link" style="color: white; background-color: #0182e8; display: block; margin: 0 auto; padding: 10px 20px; border-radius: 5px;">Logout for now</button>
-    </p>
+    </form>
   </div>
-</form>
+
   {% include "hospital/footer.html" %}
 </body>
 <!--
@@ -50,5 +54,4 @@ send me an email via
 ||
 My page: https://haru-voster.github.io/portifolio
 -->
-
 </html>

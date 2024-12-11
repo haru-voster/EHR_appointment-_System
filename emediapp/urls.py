@@ -19,15 +19,15 @@ from django.contrib.auth.views import LoginView,LogoutView
 urlpatterns = [
     
     path('',views.home_view,name=''),
-    
     path('aboutus/', views.aboutus_view),
     path('contactus/', views.contactus_view),
     # path('pay', views.pay, name='pay'),
 
     
-    path('adminclick/', views.adminclick_view),
+    path('adminclick/', views.adminclick_view, name="adminclick"),
     path('doctorclick/', views.doctorclick_view, name='doctorclick'),
-    path('patientclick/', views.patientclick_view),
+    path('patientclick/', views.patientclick_view, name="patientclick"),
+
     # admin logout
     
      

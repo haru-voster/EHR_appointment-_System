@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+{% load static %}
 {% load widget_tweaks %}
 <html lang="en" dir="ltr">
 
@@ -62,42 +62,40 @@
 
 
   <!--- signup page for admin by admin(Haroun)  ---------->
-  <form method="post">
+  <form method="post" action="{% url 'adminsignup' %}">
     {% csrf_token %}
     <div class="container register-form">
-      <div class="form">
-        <div class="note">
-          <p>Add New Admin To eMedi</p>
-        </div>
-
-        <div class="form-content">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                {% render_field form.first_name class="form-control" placeholder="First Name" %}
-              </div>
-              <div class="form-group">
-                {% render_field form.username class="form-control" placeholder="Username" %}
-              </div>
-
+        <div class="form">
+            <div class="note">
+                <p>Add New Admin To eMedi</p>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                {% render_field form.last_name class="form-control" placeholder="Last Name" %}
-              </div>
-              <div class="form-group">
-                {% render_field form.password class="form-control" placeholder="Password" %}
-              </div>
 
+            <div class="form-content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% render_field form.first_name class="form-control" placeholder="First Name" %}
+                        </div>
+                        <div class="form-group">
+                            {% render_field form.username class="form-control" placeholder="Username" %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% render_field form.last_name class="form-control" placeholder="Last Name" %}
+                        </div>
+                        <div class="form-group">
+                            {% render_field form.password class="form-control" placeholder="Password" %}
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btnSubmit">Submit</button>
+                <div class="text-center">Already have an account? <a href="{% url 'adminlogin' %}">Login here</a></div>
             </div>
-          </div>
-          <button type="submit" class="btnSubmit">Submit</button>
-          <div class="text-center">Already have an account? <a href="/adminlogin">Login here</a></div>
         </div>
-      </div>
     </div>
+</form>
 
-  </form>
 
 
   {% include "hospital/footer.html" %}
