@@ -922,33 +922,72 @@ def contactus_view(request):
 #------------------------ ADMIN RELATED VIEWS END ------------------------------
 
 #----------mpesa api intergration--------
-# #---daraja api-----------------
-# from django.http import HttpResponse
-# import requests
-# from requests.auth import HTTPBasicAuth
-# import json
-# from . token import MpesaAccessToken, LipanaMpesaPpassword
+#---daraja api-----------------
+from django.http import HttpResponse
+import requests
+from requests.auth import HTTPBasicAuth
+import json
+from . token import MpesaAccessToken, LipanaMpesaPpassword
 
-# def pay(request):
-#     if request.method =="POST":
-#         phone = request.POST['phone']
-#         amount = request.POST['amount']
-#         access_token = MpesaAccessToken.validated_mpesa_access_token
-#         api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-#         headers = {"Authorization": "Bearer %s" % access_token}
-#         request = {
-#             "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
-#             "Password": LipanaMpesaPpassword.decode_password,
-#             "Timestamp": LipanaMpesaPpassword.lipa_time,
-#             "TransactionType": "CustomerPayBillOnline",
-#             "Amount": amount,
-#             "PartyA": phone,
-#             "PartyB": LipanaMpesaPpassword.Business_short_code,
-#             "PhoneNumber": phone,
-#             "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
-#             "AccountReference": "VOSTER_TECH",
-#             "TransactionDesc": "Web Development Charges"
-            
-#         }
+from django.http import JsonResponse
+import json
+from .token import MpesaAccessToken, LipanaMpesaPpassword
+import requests
 
+def pay(request):
+    if request.method == "POST":
+        try:
+            # Log the request body to check incoming data
+            print("Request Body:", request.body)
+
+            # Parse JSON data from request body
+            data = json.loads(request.body)
+
+            phone = data.get('phone')
+            amount = data.get('amount')
+
+            # Log parsed data
+            print("Parsed Data - Phone:", phone, "Amount:", amount)
+
+            # Validate required fields
+            if not phone or not amount:
+                return JsonResponse({'status': 'Failed', 'message': 'Phone number and amount are required.'}, status=400)
+
+            # Proceed with M-Pesa STK push
+            access_token = MpesaAccessToken.validated_mpesa_access_token
+            api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+            headers = {"Authorization": f"Bearer {access_token}"}
+
+            payload = {
+                "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
+                "Password": LipanaMpesaPpassword.decode_password,
+                "Timestamp": LipanaMpesaPpassword.lipa_time,
+                "TransactionType": "CustomerPayBillOnline",
+                "Amount": amount,
+                "PartyA": phone,
+                "PartyB": LipanaMpesaPpassword.Business_short_code,
+                "PhoneNumber": phone,
+                "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+                "AccountReference": "VOSTER_TECH",
+                "TransactionDesc": "Web Development Charges"
+            }
+
+            # Log the payload being sent to Safaricom API
+            print("M-Pesa Payload:", payload)
+
+            response = requests.post(api_url, json=payload, headers=headers)
+
+            # Log Safaricom API response
+            print("Safaricom API Response:", response.text)
+
+            if response.status_code == 200:
+                return JsonResponse({'status': 'Success', 'message': 'Your are about to Make Payment at eMEDI. Confirm the amount and proceed to enter PIN', 'href':"{% url 'download-pdf' patientId  %}"})
+            else:
+                return JsonResponse({'status': 'Failed', 'message': 'STK Push failed.', 'error': response.text}, status=500)
+
+        except json.JSONDecodeError as e:
+            print("JSON Decode Error:", str(e))
+            return JsonResponse({'status': 'Failed', 'message': 'Invalid JSON data.'}, status=400)
+
+    return JsonResponse({'status': 'Failed', 'message': 'Invalid request method.'}, status=405)
 

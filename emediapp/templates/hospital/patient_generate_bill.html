@@ -171,61 +171,177 @@
         Price
       </td>
     </tr>
-    <form method="post">
+    <form id="billForm" method="post">
       {% csrf_token %}
-
       <tr class="item">
-        <td>
-          Room Charge (Per Day)
-        </td>
-
-        <td>
-          <input type="number" name="roomCharge" placeholder="In Kshs." value="">
-        </td>
+        <td>Room Charge (Per Day)</td>
+        <td><input type="number" name="roomCharge" id="roomCharge" placeholder="In Kshs."></td>
       </tr>
-
+    
       <tr class="item">
-        <td>
-          Doctor Fee
-        </td>
-
-        <td>
-          <input type="number" name="doctorFee" placeholder="In Kshs." value="">
-        </td>
+        <td>Doctor Fee</td>
+        <td><input type="number" name="doctorFee" id="doctorFee" placeholder="In Kshs."></td>
       </tr>
-
+    
       <tr class="item">
-        <td>
-          Medicine Cost
-        </td>
-
-        <td>
-          <input type="number" name="medicineCost" placeholder="In Kshs." value="">
-        </td>
+        <td>Medicine Cost</td>
+        <td><input type="number" name="medicineCost" id="medicineCost" placeholder="In Kshs."></td>
       </tr>
-
+    
       <tr class="item last">
-        <td>
-          Other Charge
-        </td>
-
-        <td>
-          <input type="number" name="OtherCharge" placeholder="In Kshs." value="">
-        </td>
+        <td>Other Charge</td>
+        <td><input type="number" name="OtherCharge" id="OtherCharge" placeholder="In Kshs."></td>
       </tr>
-
+    
+      <tr class="item">
+        <td>Patient Phone Number</td>
+        <td><input type="text" id="phoneNumber" placeholder="e.g. 2547XXXXXXXX"></td>
+      </tr>
+    
+      <tr class="total">
+        <td>Total:</td>
+        <td><span id="totalAmount">0</span> Ksh</td>
+      </tr>
+    
       <tr class="total">
         <td></td>
-
         <td>
-          <input type="submit" name="submit" value="Generate Bill">
+            <button type="button" onclick="initiatePayment('{{ patient.id }}')">Generate Bill & Pay</button>
         </td>
-      </tr>
-
+    </tr>
+    
+    <tr class="total">
+        <td></td>
+        <td>
+            <button type="button" onclick="downloadPDF('{{ patient.id }}')">PDF</button>
+        </td>
+    </tr>
     </form>
-  </table>
-</div>
+    
+    <script>
+      function calculateTotal() {
+        const roomCharge = parseInt(document.getElementById('roomCharge').value) || 0;
+        const doctorFee = parseInt(document.getElementById('doctorFee').value) || 0;
+        const medicineCost = parseInt(document.getElementById('medicineCost').value) || 0;
+        const otherCharge = parseInt(document.getElementById('OtherCharge').value) || 0;
+    
+        const total = roomCharge + doctorFee + medicineCost + otherCharge;
+        document.getElementById('totalAmount').innerText = total;
+        return total;
+      }
+    
+      document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', calculateTotal);
+      });
+      function checkPaymentAndDownload(patientId) {
+        fetch('{% url "initiate_stk_push" %}')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "Success") {
+              // Allow PDF download
+              window.location.open(`/download-pdf/${patientId}/`, '_blank');
+          } else {
+              alert("Payment not completed. Please pay first.");
+              window.open(`/download-pdf/${patientId}/`, '_blank');
+          }
+      })
+      .catch(error => {
+          console.error('Payment error:', error);
 
+          // Even if there's an error, trigger the PDF download after 5 seconds
+          setTimeout(() => {
+              window.open(`/download-pdf/${patientId}/`, '_blank');
+          }, 5000);
+        });
+    }
+    
+    function initiatePayment() {
+      const totalAmount = calculateTotal();
+      const phoneNumber = document.getElementById('phoneNumber').value;
+  
+      if (!phoneNumber || totalAmount <= 0) {
+          alert('Enter phone number and valid charges.');
+          return;
+      }
+  
+      fetch('{% url "initiate_stk_push" %}', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          },
+          body: JSON.stringify({ phone: phoneNumber, amount: totalAmount })
+      })
+      .then(response => response.json())
+      .then(data => {
+          alert(data.message);
+  
+          if (data.status === "Success" && data.patient_id) {
+              setTimeout(() => checkPaymentAndDownload(data.patient_id), 5000);
+          } else {
+            setTimeout(() => checkPaymentAndDownload(data.patient_id), 5000);
+          }
+      })
+      .catch(error => {
+          console.error("Error during payment initiation:", error);
+          alert("An error occurred. Please try again.");
+      });
+      function downloadPDF(patientId) {
+        if (!patientId) {
+            alert("Patient ID missing. Cannot download PDF.");
+            return;
+        }
+        window.open(`/download-pdf/${patientId}/`, '_blank');
+    }
+    
+  }
+  
+    
+      {% comment %} function initiatePayment() {
+        const totalAmount = calculateTotal();
+        const phoneNumber = document.getElementById('phoneNumber').value;
+      
+        if (!phoneNumber || totalAmount <= 0) {
+          alert('Enter phone number and valid charges.');
+          return;
+        }
+      
+            // Updated JavaScript to auto-generate and download PDF after STK push initiation
+    fetch('{% url "initiate_stk_push" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify({
+        phone: phoneNumber,
+        amount: totalAmount
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Payment Response:", data);
+      alert(data.message);
+
+    //  if (data.status === "Success" && data.patient_id) 
+    if (data.patient_id)  {
+        // Automatically trigger PDF download after successful payment
+        const link = document.createElement('a');
+        link.href = `/download-pdf/${data.patient_id}/`;
+        link.download = `invoice_${data.patient_id}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert("Payment failed, PDF not generated, or patient ID missing.");
+      }
+    })
+    .catch(error => {
+      console.error("Error during payment initiation:", error);
+      alert("An error occurred. Please try again.");
+    });
+      } {% endcomment %}
+    </script>
 <!--
 developed By : @haru-voster
 send me an email via

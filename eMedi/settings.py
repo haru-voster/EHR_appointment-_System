@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'emediapp',
     'widget_tweaks',
+    'django_daraja',
 ]
 
 MIDDLEWARE = [
