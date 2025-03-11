@@ -1,148 +1,166 @@
 {% extends 'hospital/homebase.html' %}
 {% load static %}
-<!--
-written By : Haroun
--->
-
 
 {% block content %}
 
-
 <head>
   <style media="screen">
- .jumbotron {
+    .jumbotron {
       margin-top: 0px;
       margin-bottom: 0px;
-      {% comment %} background-image: url('{% static "images/bg.jpg" %}'); {% endcomment %}
       background-size: cover;
       background-repeat: no-repeat;
     }
 
-    .jumbotron h5,
-    h3 {
+    .jumbotron h5, h3 {
       text-align: center;
     }
-
-
-    .alert {
-      margin: 0px;
-    }
-
-
 
     .glow {
       font-size: 50px;
       color: white;
       text-align: center;
-      -webkit-animation: glow 1s ease-in-out infinite alternate;
-      -moz-animation: glow 1s ease-in-out infinite alternate;
+      font-weight: bold; /* Makes text bold */
       animation: glow 1s ease-in-out infinite alternate;
     }
+    
 
-    @-webkit-keyframes glow {
+    @keyframes glow {
       from {
-        text-shadow: 0 0 10px #eeeeee, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 50px #aac0f8, 0 0 60px #aac0f8, 0 0 70px #aac0f8;
+        text-shadow: 0 0 10px #eeeeee, 0 0 20px #000000, 0 0 30px #000000;
       }
-
       to {
-        text-shadow: 0 0 20px #eeeeee, 0 0 30px #8e43a0, 0 0 40px #8e43a0, 0 0 50px #8e43a0, 0 0 60px #8e43a0, 0 0 70px #8e43a0, 0 0 80px #8e43a0;
+        text-shadow: 0 0 20px #eeeeee, 0 0 30px #8e43a0, 0 0 40px #8e43a0;
       }
     }
-     
-     /* Styling the video container */
-     .video-container {
-         position: relative;
-         width: 100%;
-         height: 100vh; /* Full viewport height */
-         overflow: hidden;
-     }
-     
-     /* Styling the video */
-     #bg-video {
-         position: absolute;
-         top: 50%;
-         left: 50%;
-         transform: translate(-50%, -50%);
-         min-width: 100%;
-         min-height: 100%;
-         width: auto;
-         height: auto;
-         z-index: 1;
-         object-fit: cover;
-     }
-     
-     /* Overlay content styling */
-     .overlay-content {
-         position: relative;
-         z-index: 2;
-         text-align: center;
-         color: white;
-         top: 50%;
-         left: 50%;
-         transform: translate(-50%, -50%);
-         font-family: Arial, sans-serif;
-     }
-     
-     /* Optional content styling */
-     .overlay-content h1 {
-         font-size: 3rem;
-         margin: 0;
-     }
-     
-     .overlay-content p {
-         font-size: 1.5rem;
-         margin-top: 10px;
-     }
-     
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #bg-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .overlay-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: white;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ---- Floating MediBot Button ---- */
+    .chatbot-button {
+      position: fixed;
+      bottom: 80px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+
+    .chatbot-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* ---- Animated Arrow ---- */
+    .arrow {
+      position: fixed;
+      bottom: 150px;
+      right: 50px;
+      font-size: 30px;
+      color: #007bff;
+      animation: bounce 1.2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ---- Chatbot Prompt Message ---- */
+    .chatbot-popup {
+      position: fixed;
+      bottom: 120px;
+      right: 100px;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      font-size: 14px;
+      color: black;
+    }
+
+    .chatbot-popup::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px;
+      border-style: solid;
+      border-color: white transparent transparent transparent;
+    }
   </style>
 </head>
-<br>
-<br>
 
-{% comment %} <div class="jumbotron" style="margin-bottom: 0px;margin-top: 0px;">
-  <video autoplay muted loop id="bg-video">
-    <source src="{% static 'assets/images/course-video.mp4' %}" type="video/mp4" />
-</video>
-  <br>
-  <h5 class="display-3 glow">We Listen, We care</h5>
-  <br><br><br><br><br>
-  <p>
-  <h3>Emergency ?</h3>
-
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="/patientclick" role="button">Take Appointment</a>
-  </p>
-  <br><br>
-</div>
-
-<br><br><br><br> {% endcomment %}
+<!-- Main Video Section -->
 <div class="video-container">
   <video autoplay muted loop id="bg-video">
-      <source src="{% static '/images/patient.mp4' %}" type="video/mp4" />
-      
+    <source src="{% static '/images/patient.mp4' %}" type="video/mp4" />
   </video>
   <div class="overlay-content">
-    <br>
     <h5 class="display-3 glow">Together for Better Health</h5>
-    <br><br><br><br><br>
-    <p>
-    <h3 class ="display-3 glow">Emergency?</h3>
-  
+    <h3 class="display-3 glow">Emergency?</h3>
     <p class="lead">
       <a class="btn btn-primary btn-lg" href="/patientclick" role="button">Take Appointment</a>
     </p>
-    <br><br>
   </div>
-  
-  <br><br><br><br> 
 </div>
 
+<!-- Floating MediBot Button -->
+<div class="arrow">⬇</div>
+<div class="chatbot-popup" id="chatbotPopup">Need help? Click the MediBot!</div>
+<div class="chatbot-button" onclick="openMediBot()">🤖</div>
+
+<script>
+  function openMediBot() {
+    window.open("http://127.0.0.1:5500/medchatbot-main/frontend/index.html", "_blank");
+  }
+
+  // Show chatbot prompt message for a few seconds
+  setTimeout(function() {
+    document.getElementById("chatbotPopup").style.display = "block";
+    setTimeout(function() {
+      document.getElementById("chatbotPopup").style.display = "none";
+    }, 5000);
+  }, 2000);
+</script>
+
 {% include "hospital/admin_doctor_patient_card.html" %}
-<br><br><br>
-<!--
-developed By : @haru-voster
-send me an email via
-||
-My page: https://haru-voster.github.io/portifolio
--->
+
 {% endblock content %}
