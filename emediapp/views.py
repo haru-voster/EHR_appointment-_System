@@ -923,32 +923,67 @@ def contactus_view(request):
 
 #----------mpesa api intergration--------
 # #---daraja api-----------------
-# from django.http import HttpResponse
-# import requests
-# from requests.auth import HTTPBasicAuth
-# import json
-# from . token import MpesaAccessToken, LipanaMpesaPpassword
-
-# def pay(request):
-#     if request.method =="POST":
-#         phone = request.POST['phone']
-#         amount = request.POST['amount']
-#         access_token = MpesaAccessToken.validated_mpesa_access_token
-#         api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-#         headers = {"Authorization": "Bearer %s" % access_token}
-#         request = {
-#             "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
-#             "Password": LipanaMpesaPpassword.decode_password,
-#             "Timestamp": LipanaMpesaPpassword.lipa_time,
-#             "TransactionType": "CustomerPayBillOnline",
-#             "Amount": amount,
-#             "PartyA": phone,
-#             "PartyB": LipanaMpesaPpassword.Business_short_code,
-#             "PhoneNumber": phone,
-#             "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
-#             "AccountReference": "VOSTER_TECH",
-#             "TransactionDesc": "Web Development Charges"
-            
-#         }
+import json
+import requests
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from . token import MpesaAccessToken, LipanaMpesaPpassword
+from django.views.decorators.csrf import csrf_exempt
 
 
+@csrf_exempt  # If needed
+def pay(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)  # Extract JSON data
+            phone = data.get("phone")
+            amount = data.get("amount")
+
+            if not phone or not amount:
+                return JsonResponse({"error": "Phone number and amount are required"}, status=400)
+
+            # Convert amount to integer (important)
+            amount = int(amount)
+
+            # Access token
+            access_token = MpesaAccessToken.validated_mpesa_access_token
+            api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+            headers = {"Authorization": f"Bearer {access_token}"}
+
+            # STK Push request payload
+            payload = {
+                "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
+                "Password": LipanaMpesaPpassword.decode_password,
+                "Timestamp": LipanaMpesaPpassword.lipa_time,
+                "TransactionType": "CustomerPayBillOnline",
+                "Amount": amount,
+                "PartyA": phone,  # Customer's phone number
+                "PartyB": LipanaMpesaPpassword.Business_short_code,  # Business PayBill number
+                "PhoneNumber": phone,
+                "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+                "AccountReference": "eMedi_Hospital",
+                "TransactionDesc": "Hospital Bill Payment"
+            }
+
+            response = requests.post(api_url, json=payload, headers=headers)
+            response_data = response.json()
+
+            if response.status_code == 200:
+                return JsonResponse({
+                    "success": "STK Push sent successfully! Enter your PIN on your phone to complete the payment.",
+                    "data": response_data
+                })
+            else:
+                return JsonResponse({
+                    "error": "Failed to process payment",
+                    "details": response_data
+                }, status=400)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+        except ValueError:
+            return JsonResponse({"error": "Invalid amount format"}, status=400)
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({"error": "An error occurred", "details": str(e)}, status=500)
+
+    return render(request, "patient_final_bill.html")
