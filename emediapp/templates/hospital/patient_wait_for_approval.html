@@ -50,11 +50,11 @@
   <br><br>
 
   <div class="jumbotron">
-    <h1 class="display-4">Hello {{ request.user.first_name }}</h1>
+    <h1 class="display-4">Hello, {{ request.user.first_name }} 😊</h1>
     <p class="lead">
-      Your Account is not approved yet.<br><br>
-      Our Team is checking your profile.<br><br>
-      Soon your account will be confirmed!!!
+      Your account is currently under review.<br><br>
+      Our team is verifying your profile.<br><br>
+      You’ll be able to access your dashboard soon!
     </p>
 
     <hr class="my-4">
@@ -62,13 +62,13 @@
 
     <!-- Countdown Timer Display -->
     <div class="countdown-container">
-      Login available in <span id="countdown">30</span> seconds...
+      Login available in <span id="countdown">10</span> seconds...
       <div class="loader"></div> <!-- Rotating Loader -->
     </div>
 
     <p class="lead">
       <button id="login-btn" class="btn btn-primary disabled-btn" disabled onclick="redirectToDashboard()">
-        Continue (Wait <span id="countdown-btn">30</span>s)
+        Login now (Wait <span id="countdown-btn">10</span>s)
       </button>
     </p>
 
@@ -80,7 +80,7 @@
   </div>
 
   <script>
-    let timeLeft = 30;
+    let timeLeft = 10;
     let countdownEl = document.getElementById("countdown");
     let countdownBtnEl = document.getElementById("countdown-btn");
     let loginBtn = document.getElementById("login-btn");
@@ -95,10 +95,10 @@
         clearInterval(timer);
         loginBtn.classList.remove("disabled-btn");
         loginBtn.disabled = false;
-        loginBtn.innerText = "Login Now";
+        loginBtn.innerText = "Continue";
         document.querySelector(".countdown-container").innerText = "Login is now enabled!";
       }
-    }, 1000);
+    }, 700);
 
     // Redirect to patient dashboard when clicking "Login Now"
     function redirectToDashboard() {
