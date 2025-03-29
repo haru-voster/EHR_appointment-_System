@@ -13,6 +13,8 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LoginView,LogoutView
+from .views import  auto_approve_patient
+
 
 
 #FOR ADMIN RELATED URLS
@@ -43,6 +45,7 @@ urlpatterns = [
 
     path('afterlogin/', views.afterlogin_view,name='afterlogin'),
     path('logout/', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
+    path('auto_approve_patient/', auto_approve_patient, name='auto_approve_patient'),
 
 
     path('admin-dashboard/', views.admin_dashboard_view,name='admin-dashboard'),

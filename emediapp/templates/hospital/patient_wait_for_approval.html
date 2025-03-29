@@ -42,6 +42,24 @@
     </p>
   </div>
 </form>
+<script>
+  setTimeout(function() {
+    fetch("{% url 'auto_approve_patient' %}", {
+      method: "GET",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.href = data.redirect_url;  // Redirect to patient dashboard
+      }
+    })
+    .catch(error => console.error("Error auto-approving patient:", error));
+  }, 10000);  // 10 seconds delay
+</script>
+
   {% include "hospital/footer.html" %}
 </body>
 <!--

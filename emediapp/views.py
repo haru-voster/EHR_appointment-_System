@@ -9,6 +9,7 @@ from datetime import datetime,timedelta,date
 from django.conf import settings
 from django.db.models import Q
 from django.contrib import messages
+import time
 
 # Create your views here.
 def home_view(request):
@@ -144,16 +145,26 @@ def afterlogin_view(request):
         else:
             return render(request,'hospital/doctor_wait_for_approval.html')
     elif is_patient(request.user):
-        accountapproval=models.Patient.objects.all().filter(user_id=request.user.id,status=True)
-        if accountapproval:
+        patient = Patient.objects.get(user_id=request.user.id)
+
+        if patient.status:
             return redirect('patient-dashboard')
         else:
-            return render(request,'hospital/patient_wait_for_approval.html')
+            # Show the waiting page first
+            return render(request, 'hospital/patient_wait_for_approval.html', {'username': request.user.username})
+        
+        
+from django.http import JsonResponse
+from .models import Patient  # Import the Patient model
 
-
-
-
-
+def auto_approve_patient(request):
+    """API endpoint to approve patient after 10 seconds."""
+    if request.user.is_authenticated and is_patient(request.user):
+        patient = Patient.objects.get(user_id=request.user.id)
+        patient.status = True
+        patient.save()
+        return JsonResponse({"success": True, "redirect_url": "/patient-dashboard/"})
+    return JsonResponse({"success": False})
 
 
 
