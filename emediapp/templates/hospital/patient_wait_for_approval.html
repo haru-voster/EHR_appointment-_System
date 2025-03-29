@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load static%}
+{% load static %}
 <html lang="en" dir="ltr">
 
 <head>
@@ -7,66 +7,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>@eMedi || Haroun</title>
 
-
-  <style media="screen">
+  <style>
     .jumbotron {
       margin-top: 0px;
       margin-bottom: 0px;
-    }
-
-    .jumbotron h1 {
       text-align: center;
     }
 
-    .alert {
-      margin: 0px;
+    .countdown-container {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: red;
+    }
+
+    .disabled-btn {
+      background-color: gray !important;
+      cursor: not-allowed !important;
+    }
+
+    /* Rotating loader */
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      display: block;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 
 <body>
   {% include "hospital/navbar.html" %}
-  <br>
-  <br>
-  <div class="jumbotron" style="margin-top: 0px;
-  margin-bottom: 0px;">
-     <!-- Logout Form -->
-  <form action="{% url 'logout' %}" method="post" style="display: inline;">
-      {% csrf_token %}
-    <h1 class="display-4">Hello {{request.user.first_name}}</h1>
-    <p class="lead">Your Account is not approved till now <br><br>Our Team is checking your profile <br><br> Soon your account will be confirmed !!!</p>
+  <br><br>
+
+  <div class="jumbotron">
+    <h1 class="display-4">Hello {{ request.user.first_name }}</h1>
+    <p class="lead">
+      Your Account is not approved yet.<br><br>
+      Our Team is checking your profile.<br><br>
+      Soon your account will be confirmed!!!
+    </p>
+
     <hr class="my-4">
     <p>Check Later</p>
+
+    <!-- Countdown Timer Display -->
+    <div class="countdown-container">
+      Login available in <span id="countdown">30</span> seconds...
+      <div class="loader"></div> <!-- Rotating Loader -->
+    </div>
+
     <p class="lead">
-      <button type="submit" class="btn btn-link nav-item nav-link" style="color: white; background-color: #0182e8; display: block; margin: 0 auto; padding: 10px 20px; border-radius: 5px;">Logout for now</button>
+      <button id="login-btn" class="btn btn-primary disabled-btn" disabled onclick="redirectToDashboard()">
+        Continue (Wait <span id="countdown-btn">30</span>s)
+      </button>
     </p>
+
+    <!-- Logout Form -->
+    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Logout for now</button>
+    </form>
   </div>
-</form>
-<script>
-  setTimeout(function() {
-    fetch("{% url 'auto_approve_patient' %}", {
-      method: "GET",
-      headers: {
-        "X-Requested-With": "XMLHttpRequest"
+
+  <script>
+    let timeLeft = 30;
+    let countdownEl = document.getElementById("countdown");
+    let countdownBtnEl = document.getElementById("countdown-btn");
+    let loginBtn = document.getElementById("login-btn");
+
+    // Countdown Timer
+    let timer = setInterval(() => {
+      timeLeft--;
+      countdownEl.innerText = timeLeft;
+      countdownBtnEl.innerText = timeLeft;
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        loginBtn.classList.remove("disabled-btn");
+        loginBtn.disabled = false;
+        loginBtn.innerText = "Login Now";
+        document.querySelector(".countdown-container").innerText = "Login is now enabled!";
       }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        window.location.href = data.redirect_url;  // Redirect to patient dashboard
-      }
-    })
-    .catch(error => console.error("Error auto-approving patient:", error));
-  }, 10000);  // 10 seconds delay
-</script>
+    }, 1000);
+
+    // Redirect to patient dashboard when clicking "Login Now"
+    function redirectToDashboard() {
+      window.location.href = "{% url 'patient-dashboard' %}";
+    }
+  </script>
 
   {% include "hospital/footer.html" %}
 </body>
-<!--
-developed By : @haru-voster
-send me an email via
-||
-My page: https://haru-voster.github.io/portifolio
--->
 
 </html>
