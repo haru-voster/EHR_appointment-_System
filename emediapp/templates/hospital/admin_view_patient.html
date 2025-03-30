@@ -49,13 +49,102 @@ facebook : fb.com/sumit.luv
         <td>{{p.symptoms}}</td>
         <td>{{p.mobile}}</td>
         <td>{{p.address}}</td>
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-patient' p.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-patient-from-hospital' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+        <td><a class="btn btn-primary btn-xs" href="{% url 'update-patient' p.id  %}" onclick="return confirmUpdate();"><span class="glyphicon glyphicon-edit"></span></a></td>
+        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-patient-from-hospital' p.id  %}"  onclick="openDeleteModal({{ p.id }}); return false;">
+        <span class="glyphicon glyphicon-trash"></span></a></td>
       </tr>
       {% endfor %}
     </table>
   </div>
 </div>
+<!-- Delete Confirmation Modal and update modal-->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+      <h3>Confirm Deletion</h3>
+      <p>Are you sure you want to delete this patient? This action cannot be undone.</p>
+      <div class="modal-buttons"> 
+        <a id="confirmDeleteBtn" class="delete-btn">Delete</a>
+          <button class="cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+         
+      </div>
+  </div>
+</div>
+<style>
+  /* Background overlay */
+  .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+  }
+  
+  /* Modal box */
+  .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Buttons */
+  .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+  }
+  
+  .cancel-btn {
+      background-color: gray;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  
+  .delete-btn {
+      background-color: red;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+  }
+  
+  .cancel-btn:hover {
+      background-color: darkgray;
+  }
+  
+  .delete-btn:hover {
+      background-color: darkred;
+  }
+  </style>
+  
+  <script>
+    function openDeleteModal(patientId) {
+   
+        document.getElementById("deleteModal").style.display = "flex";
+        document.getElementById("confirmDeleteBtn").href = `/delete_patient_from_hospital/${patientId}/`;
+       }
+    
+    function closeDeleteModal() {
+       document.getElementById("deleteModal").style.display = "none";
+    }
+    function confirmUpdate() {
+      return confirm("Are you sure you want to Update{{ p.id }}?");
+  }
+    </script>
+    
+
 <!--
 developed By : @haru-voster
 send me an email via
