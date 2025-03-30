@@ -44,6 +44,11 @@
     }
     .btn-download { background: red; }
     .btn-pay { background: green; }
+    .btn-disabled {
+      background: gray;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
     /* Payment Modal Styling */
     #paymentModal {
       display: none;
@@ -117,7 +122,7 @@
 
 <!-- Download and Pay Buttons -->
 <div class="download">
-  <a class="btn btn-download" href="{% url 'download-pdf' patientId  %}">Download</a>
+  <a class="btn btn-download btn-disabled" id="downloadBtn" href="{% url 'download-pdf' patientId  %}" disabled>Download</a>
   <button class="btn btn-pay" onclick="openPaymentModal()">Pay Now</button>
 </div>
 
@@ -128,6 +133,8 @@
   }
   function closePaymentModal() {
     document.getElementById("paymentModal").style.display = "none";
+    document.getElementById("downloadBtn").classList.remove("btn-disabled");
+    document.getElementById("downloadBtn").removeAttribute("disabled");
   }
   function processPayment() {
     var phone = document.getElementById("phone").value.trim();
@@ -151,8 +158,11 @@
             phone: phone.startsWith("254") ? phone : "254" + phone.substring(1),
             amount: totalAmount
         })
+    }).then(response => {
+        if (response.ok) {
+            alert("Payment initiated successfully");
+        }
     });
-    
   }
 </script>
 
