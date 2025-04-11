@@ -46,10 +46,17 @@
       background: #0062cc;
       color: #fff;
     }
+
+    .toggle-password {
+      cursor: pointer;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   </style>
 
 </head>
-
 
 <body>
   {% include "hospital/navbar.html" %}
@@ -58,9 +65,7 @@
   <br>
   <br>
 
-
-
-
+  <!-- Patient Signup Form -->
   <form method="post" enctype="multipart/form-data" action="{% url 'patientsignup' %}" style="display: inline;">
     {% csrf_token %}
     <div class="container register-form">
@@ -94,8 +99,11 @@
               <div class="form-group">
                 {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
               </div>
-              <div class="form-group">
-                {% render_field userForm.password class="form-control" placeholder="Password" %}
+              <div class="form-group position-relative">
+                {% render_field userForm.password class="form-control" placeholder="Password" id="passwordField" %}
+                <span class="toggle-password" onclick="togglePassword()">
+                  <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                </span>
               </div>
               <div class="form-group">
                 {% render_field patientForm.mobile class="form-control" placeholder="Mobile Number" %}
@@ -119,12 +127,25 @@
   </form>
 
   {% include "hospital/footer.html" %}
+
+  <script>
+    // Function to toggle password visibility
+    function togglePassword() {
+      const passwordField = document.getElementById('passwordField');
+      const toggleIcon = document.getElementById('togglePasswordIcon');
+      
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+  </script>
+
 </body>
-<!--
-developed By : @haru-voster
-send me an email via
-||
-My page: https://haru-voster.github.io/portifolio
--->
 
 </html>

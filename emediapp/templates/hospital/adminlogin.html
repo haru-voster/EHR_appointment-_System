@@ -76,10 +76,26 @@
             </div>
             <div class="col-md-6">
 
-              <div class="form-group">
-                {% render_field form.password class="form-control" placeholder="Password" %}
-              </div>
-
+              <div class="form-group position-relative">
+                {% render_field form.password class="form-control" placeholder="Password" id="passwordField" %}
+                <span class="position-absolute" style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"
+                      onmousedown="showPassword()" onmouseup="hidePassword()" onmouseleave="hidePassword()">
+                    <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                </span>
+            </div>
+            
+            <script>
+                function showPassword() {
+                    const passwordField = document.getElementById('passwordField');
+                    passwordField.type = 'text';
+                }
+            
+                function hidePassword() {
+                    const passwordField = document.getElementById('passwordField');
+                    passwordField.type = 'password';
+                }
+            </script>
+            
             </div>
           </div>
           <button type="submit" class="btnSubmit">Login</button>
