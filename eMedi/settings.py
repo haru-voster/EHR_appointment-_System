@@ -140,10 +140,12 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'static')
 
 STATIC_URL = '/static/'
 
-# For development, collect static files in this directory
+# For development, collect static files in this directory and change to 
+#STATIC_ROOT = "/home/username/public_html/static/"
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL='/afterlogin'
