@@ -19,25 +19,26 @@ def home_view(request):
 
 
 #for showing signup/login button for admin(by Haroun)
+from django.shortcuts import render, redirect
+
+
 def adminclick_view(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('afterlogin')
-    return render(request,'hospital/adminclick.html')
+        return redirect('afterlogin')
+    return render(request, 'hospital/adminclick.html')
 
-
-#for showing signup/login button for doctor(by Haroun)
+# For showing signup/login button for doctor
 def doctorclick_view(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('afterlogin')
-    return render(request,'hospital/doctorclick.html')
+        return redirect('afterlogin')
+    return render(request, 'hospital/doctorclick.html')
 
 
-#for showing signup/login button for patient(by Haroun)
+# For showing signup/login button for patient
 def patientclick_view(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('afterlogin')
-    return render(request,'hospital/patientclick.html')
-
+        return redirect('afterlogin')
+    return render(request, 'hospital/patientclick.html')
 
 
 
@@ -129,30 +130,73 @@ def is_patient(user):
     return user.groups.filter(name='PATIENT').exists()
 
 
-#---------AFTER ENTERING CREDENTIALS WE CHECK WHETHER USERNAME AND PASSWORD IS OF ADMIN,DOCTOR OR PATIENT
-def afterlogin_view(request):
-    if is_admin(request.user):
-        return redirect('admin-dashboard')
-    #  accountapproval=models.Doctor.objects.all().filter(user_id=request.user.id,status=True)
-    #     if accountapproval:
-    #         return redirect('admin-dashboard')
-    #     else:
-    #         return render(request,'hospital/admin_wait_for_approval.html')
-    elif is_doctor(request.user):
-        accountapproval=models.Doctor.objects.all().filter(user_id=request.user.id,status=True)
-        if accountapproval:
-            return redirect('doctor-dashboard')
-        else:
-            return render(request,'hospital/doctor_wait_for_approval.html')
-    elif is_patient(request.user):
-        patient = Patient.objects.get(user_id=request.user.id)
+from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+from .models import Doctor, Patient, Appointment
 
-        if patient.status:
-            return redirect('patient-dashboard')
-        else:
-            # Show the waiting page first
-            return render(request, 'hospital/patient_wait_for_approval.html', {'username': request.user.username})
-        
+def afterlogin_view(request):
+    user = request.user
+
+    # If user is not authenticated, redirect to a login page
+    if not user.is_authenticated:
+        return redirect('doctorlogin')  # Or a general login page
+
+    # Admin
+   # Admin or Superuser
+    if user.is_superuser or user.groups.filter(name='ADMIN').exists():
+        # Get all data for admin dashboard
+        doctors = Doctor.objects.all().order_by('-id')
+        patients = Patient.objects.all().order_by('-id')
+
+        doctorcount = Doctor.objects.filter(status=True).count()
+        pendingdoctorcount = Doctor.objects.filter(status=False).count()
+
+        patientcount = Patient.objects.filter(status=True).count()
+        pendingpatientcount = Patient.objects.filter(status=False).count()
+
+        appointmentcount = Appointment.objects.filter(status=True).count()
+        pendingappointmentcount = Appointment.objects.filter(status=False).count()
+
+        context = {
+            'doctors': doctors,
+            'patients': patients,
+            'doctorcount': doctorcount,
+            'pendingdoctorcount': pendingdoctorcount,
+            'patientcount': patientcount,
+            'pendingpatientcount': pendingpatientcount,
+            'appointmentcount': appointmentcount,
+            'pendingappointmentcount': pendingappointmentcount,
+        }
+
+        return render(request, 'hospital/admin_dashboard.html', context=context)
+
+
+    # Doctor
+    elif user.groups.filter(name='DOCTOR').exists():
+        try:
+            doctor = Doctor.objects.get(user=user)
+            if doctor.status:
+                return redirect('doctor-dashboard')
+            else:
+                return render(request, 'hospital/doctor_wait_for_approval.html')
+        except Doctor.DoesNotExist:
+            return redirect('doctorlogin')
+
+    # Patient
+    elif user.groups.filter(name='PATIENT').exists():
+        try:
+            patient = Patient.objects.get(user=user)
+            if patient.status:
+                return redirect('patient-dashboard')
+            else:
+                return render(request, 'hospital/patient_wait_for_approval.html', {'username': user.username})
+        except Patient.DoesNotExist:
+            return redirect('patientlogin')
+
+    # Fallback: user authenticated but not in any group
+    return redirect('doctorlogin')
+
+
         
 from django.http import JsonResponse
 from .models import Patient  # Import the Patient model

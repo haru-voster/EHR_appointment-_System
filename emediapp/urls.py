@@ -38,14 +38,17 @@ urlpatterns = [
     path('doctorsignup/', views.doctor_signup_view,name='doctorsignup'),
     path('patientsignup/', views.patient_signup_view, name="patientsignup"),
     
-    path('adminlogin/', LoginView.as_view(template_name='hospital/adminlogin.html')),
-    path('doctorlogin/', LoginView.as_view(template_name='hospital/doctorlogin.html')),
-    path('patientlogin/', LoginView.as_view(template_name='hospital/patientlogin.html')),
+path('adminlogin/', LoginView.as_view(template_name='hospital/adminlogin.html'), name='adminlogin'),
+path('doctorlogin/', LoginView.as_view(template_name='hospital/doctorlogin.html'), name='doctorlogin'),
+path('patientlogin/', LoginView.as_view(template_name='hospital/patientlogin.html'), name='patientlogin'),
+
+
 
 
     path('afterlogin/', views.afterlogin_view,name='afterlogin'),
     path('logout/', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
     path('auto_approve_patient/', auto_approve_patient, name='auto_approve_patient'),
+
 
 
     path('admin-dashboard/', views.admin_dashboard_view,name='admin-dashboard'),

@@ -151,9 +151,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL='/afterlogin'
-# redirect to home page
-LOGOUT_REDIRECT_URL = '/' 
+LOGIN_REDIRECT_URL = '/afterlogin/'  # redirect here after login
+LOGIN_URL = '/adminlogin/'           # fallback for login_required
+
 
 SESSION_COOKIE_SECURE = False
 #for contact us give your gmail id and password
