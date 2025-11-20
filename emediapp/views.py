@@ -122,12 +122,16 @@ def patient_signup_view(request):
 
 
 #-----------for checking user is doctor , patient or admin(by Haroun)
+#-----------for checking user is doctor, patient or admin (by Haroun)
 def is_admin(user):
-    return user.groups.filter(name='ADMIN').exists()
+    return user.is_superuser or user.groups.filter(name='ADMIN').exists()
+
 def is_doctor(user):
     return user.groups.filter(name='DOCTOR').exists()
+
 def is_patient(user):
     return user.groups.filter(name='PATIENT').exists()
+
 
 
 from django.shortcuts import redirect, render
@@ -259,7 +263,7 @@ def admin_view_doctor_view(request):
 
 
 
-@login_required(login_url='adminlogin')
+# @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def delete_doctor_from_hospital_view(request,pk):
     doctor=models.Doctor.objects.get(id=pk)
