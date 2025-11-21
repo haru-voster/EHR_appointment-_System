@@ -117,7 +117,7 @@ def patient_signup_view(request):
     return render(request, 'hospital/patientsignup.html', context=mydict)
 
 
-#-----------for checking user is doctor , patient or admin(by Haroun)
+#-----------  doctor , patient or admin(by Haroun)
 
 def is_admin(user):
     # return user.is_superuser or user.groups.filter(name='ADMIN').exists()
