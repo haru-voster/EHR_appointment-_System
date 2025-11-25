@@ -1057,10 +1057,12 @@ def pay(request):
 
     return render(request, "patient_final_bill.html")
 # ----medi bot for assistance integration------
+
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse    
+
 HF_API_KEY = "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"
-MODEL_URL = "https://api-inference.huggingface.co/models/google/gemma-2b-it"  # Example model
+MODEL_URL = "https://router.huggingface.co"
 
 headers = {
     "Authorization": f"Bearer {HF_API_KEY}",
@@ -1073,14 +1075,28 @@ def medical_bot(request):
         data = json.loads(request.body)
         user_message = data.get("message", "")
 
-        payload = {"inputs": user_message}
+        # Prompt engineering improves accuracy
+        payload = {
+            "inputs": f"User: {user_message}\nAssistant (medical):"
+        }
 
         response = requests.post(MODEL_URL, headers=headers, json=payload)
         output = response.json()
 
-        try:
+        print("--- HF API Output ---")
+        print(output)
+
+        bot_reply = "I'm sorry, I could not understand that."
+
+        # Case 1: List response (most models)
+        if isinstance(output, list) and "generated_text" in output[0]:
             bot_reply = output[0]["generated_text"]
-        except:
-            bot_reply = "Sorry, I could not understand that."
+
+        # Case 2: Single dictionary response
+        elif isinstance(output, dict) and "generated_text" in output:
+            bot_reply = output["generated_text"]
+
+        # Remove "Assistant:" from generated text
+        bot_reply = bot_reply.replace("Assistant:", "").strip()
 
         return JsonResponse({"reply": bot_reply})
