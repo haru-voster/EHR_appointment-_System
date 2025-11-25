@@ -1056,3 +1056,31 @@ def pay(request):
             return JsonResponse({"error": "An error occurred", "details": str(e)}, status=500)
 
     return render(request, "patient_final_bill.html")
+# ----medi bot for assistance integration------
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse    
+HF_API_KEY = "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"
+MODEL_URL = "https://api-inference.huggingface.co/models/google/gemma-2b-it"  # Example model
+
+headers = {
+    "Authorization": f"Bearer {HF_API_KEY}",
+    "Content-Type": "application/json"
+}
+
+@csrf_exempt
+def medical_bot(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_message = data.get("message", "")
+
+        payload = {"inputs": user_message}
+
+        response = requests.post(MODEL_URL, headers=headers, json=payload)
+        output = response.json()
+
+        try:
+            bot_reply = output[0]["generated_text"]
+        except:
+            bot_reply = "Sorry, I could not understand that."
+
+        return JsonResponse({"reply": bot_reply})
