@@ -6,3 +6,6 @@ pip install django-crispy-forms
 pip install PyPDF2
  
 pip install xhtml2pdf Django==3.0.5 django-widget-tweaks==1.4.8 sqlparse==0.3.1 django-crispy-forms PyPDF2
+
+##hugging api
+pip install huggingface_hub
