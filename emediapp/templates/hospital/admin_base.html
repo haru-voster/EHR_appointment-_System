@@ -292,7 +292,87 @@
       <li tabindex="0" class="icon-customers"> <a style="color:white; text-decoration:none;" href="/admin-doctor"><span>Doctor</span></a></li>
       <li tabindex="0" class="icon-users"> <a style="color:white; text-decoration:none;" href="/admin-patient"><span>Patient</span></a></li>
       <li tabindex="0" class="icon-calendar"> <a style="color:white; text-decoration:none;" href="/admin-appointment"><span>Appointment</span></a></li>
-    </ul>
+        <!-- THE CHAT BUTTON -->
+    <li tabindex="0" class="icon-users">
+        <a style="color:white; text-decoration:none; cursor:pointer;"
+           onclick="openMediBot()">
+           🤖 <span>Chat</span>
+        </a>
+    </li>
+</ul>
+
+
+<!-- BOT POPUP OUTSIDE THE UL (IMPORTANT) -->
+<div id="mediChatBox" style="
+    display:none;
+    position:fixed;
+    bottom:70px;
+    right:20px;
+    width:330px;
+    height:430px;
+    background:white;
+    border-radius:10px;
+    box-shadow:0px 0px 12px rgba(0,0,0,0.4);
+    padding:10px;
+    z-index:999999;
+">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 style="margin:0; color:#0056b3;">eMedi Assistant</h4>
+        <button onclick="closeMediBot()" style="
+            background:red;
+            color:white;
+            border:none;
+            border-radius:5px;
+            padding:4px 8px;
+            cursor:pointer;">X</button>
+    </div>
+
+    <div id="mediMessages" style="
+        height:320px;
+        overflow-y:auto;
+        margin-top:10px;
+        border:1px solid #ccc;
+        padding:8px;
+        border-radius:5px;
+        background:#f7f7f7;"></div>
+
+    <input id="mediInput" class="form-control" placeholder="Ask a medical question...">
+    <button onclick="sendMediMessage()" class="btn btn-primary w-100 mt-2">
+        Send
+    </button>
+</div>
+
+    <script>
+function openMediBot() {
+    document.getElementById("mediChatBox").style.display = "block";
+}
+
+function closeMediBot() {
+    document.getElementById("mediChatBox").style.display = "none";
+}
+
+function sendMediMessage() {
+    let msg = document.getElementById("mediInput").value;
+    if (msg.trim() === "") return;
+
+    let box = document.getElementById("mediMessages");
+    box.innerHTML += `<p><b>You:</b> ${msg}</p>`;
+
+    // Send message to Django bot view
+    fetch("/bot/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg})
+    })
+    .then(res => res.json())
+    .then(data => {
+        box.innerHTML += `<p><b>Bot:</b> ${data.reply}</p>`;
+        box.scrollTop = box.scrollHeight;  // auto scroll
+    });
+
+    document.getElementById("mediInput").value = "";
+}
+</script>
   </nav>
 
   <main>
