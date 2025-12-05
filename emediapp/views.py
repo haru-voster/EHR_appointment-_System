@@ -1062,41 +1062,43 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 HF_API_KEY = "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"
-MODEL_URL = "https://router.huggingface.co"
+MODEL_URL = "https://router.huggingface.co/hf-inference/v1/chat/completions"
+
 
 headers = {
     "Authorization": f"Bearer {HF_API_KEY}",
     "Content-Type": "application/json"
 }
-
 @csrf_exempt
 def medical_bot(request):
     if request.method == "POST":
         data = json.loads(request.body)
         user_message = data.get("message", "")
 
-        # Prompt engineering improves accuracy
         payload = {
             "inputs": f"User: {user_message}\nAssistant (medical):"
         }
 
         response = requests.post(MODEL_URL, headers=headers, json=payload)
-        output = response.json()
 
-        print("--- HF API Output ---")
-        print(output)
+        try:
+            output = response.json()
+        except Exception:
+            print("RAW RESPONSE (NOT JSON):", response.text)
+            return JsonResponse({
+                "error": "The medical bot API did not return valid JSON.",
+                "raw_response": response.text
+            }, status=500)
 
         bot_reply = "I'm sorry, I could not understand that."
 
-        # Case 1: List response (most models)
-        if isinstance(output, list) and "generated_text" in output[0]:
+        if isinstance(output, list) and len(output) > 0 and "generated_text" in output[0]:
             bot_reply = output[0]["generated_text"]
-
-        # Case 2: Single dictionary response
         elif isinstance(output, dict) and "generated_text" in output:
             bot_reply = output["generated_text"]
 
-        # Remove "Assistant:" from generated text
         bot_reply = bot_reply.replace("Assistant:", "").strip()
 
         return JsonResponse({"reply": bot_reply})
+
+    return JsonResponse({"error": "Invalid request method"}, status=400)
