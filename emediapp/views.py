@@ -1030,8 +1030,8 @@ def pay(request):
                 "PartyB": LipanaMpesaPpassword.Business_short_code,  # Business PayBill number
                 "PhoneNumber": phone,
                 "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
-                "AccountReference": "eMedi_Hospital",
-                "TransactionDesc": "Hospital Bill Payment"
+                "AccountReference": "LUCY-SHOP",
+                "TransactionDesc": "SHOP PAYMENT"
             }
 
             response = requests.post(api_url, json=payload, headers=headers)
