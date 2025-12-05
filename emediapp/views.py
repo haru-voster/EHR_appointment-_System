@@ -1061,7 +1061,7 @@ def pay(request):
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-HF_API_KEY = "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"
+HF_API_KEY = "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"
 MODEL_URL = "https://router.huggingface.co"
 
 headers = {
