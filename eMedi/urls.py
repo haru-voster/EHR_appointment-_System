@@ -24,4 +24,3 @@ urlpatterns = [
     
 ]
 
-# @haroun
